@@ -9,26 +9,32 @@ class StatDashboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      isMaterialAppTheme: true,
-      data: Theme.of(context).copyWith(
-        textTheme: Theme.of(context).textTheme.merge(Typography.whiteCupertino),
-      ),
-      child: Builder(
-        builder: (context) {
-          return Column(
-            children: [
-              Text(
-                statDesc,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(
-                statTitle,
-                style: Theme.of(context).textTheme.bodyText1,
-              )
-            ],
-          );
-        },
+    return GestureDetector(
+      onTap: () {
+        // context.read()
+      },
+      child: Theme(
+        isMaterialAppTheme: true,
+        data: Theme.of(context).copyWith(
+          textTheme:
+              Theme.of(context).textTheme.merge(Typography.whiteCupertino),
+        ),
+        child: Builder(
+          builder: (context) {
+            return Column(
+              children: [
+                Text(
+                  statDesc,
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                Text(
+                  statTitle,
+                  style: Theme.of(context).textTheme.bodyText1,
+                )
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_app/blocs/theme/theme_bloc.dart';
 import 'package:flutter_todo_app/main.dart';
+import 'package:flutter_todo_app/screens/about_screen.dart';
+import 'package:flutter_todo_app/screens/settings_screen.dart';
 import 'package:flutter_todo_app/widgets/stat_dashboard_widget.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,16 +18,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<FormState> _todoForm = GlobalKey<FormState>();
+  GlobalKey<FormState> _todoForm;
+
+  GlobalKey<ScaffoldState> _scaffoldKey;
 
   String todoText;
 
   @override
   initState() {
+    _todoForm = GlobalKey<FormState>();
+    _scaffoldKey = GlobalKey<ScaffoldState>();
     super.initState();
   }
 
-  Future createTodo() {
+  @override
+  dispose() {
+    _todoForm.currentState.dispose();
+    _scaffoldKey.currentState.dispose();
+    super.dispose();
+  }
+
+  Future _createTodo() {
     return showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -36,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
             color: CupertinoColors.white,
             border:
                 Border.all(style: BorderStyle.solid, color: Colors.transparent),
-            // border: Border.(borderRadius: BorderRadius.circular(18)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -69,12 +83,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       onPressed: () {
                         _todoForm.currentState.validate();
-                        // print(_todoForm.currentState.);
-                        // todoBox.put
+
                         todoBox.add({
                           'content': todoText,
                           'isCompleted': false,
                         });
+
                         Navigator.of(context).pop();
                       },
                     )
@@ -88,89 +102,132 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _useDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Settings'),
+            onTap: () {
+              Navigator.of(context).push(SettingsScreen.route());
+            },
+          ),
+          BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, themeState) {
+              print(themeState.themeMode);
+              return ListTile(
+                leading: Icon(Icons.nightlight_round),
+                title: Text('Dark Mode'),
+                onTap: () {
+                  context.read<ThemeCubit>().toggleDarkTheme();
+                  // Theme.of(context).
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.info_outline_rounded),
+            title: Text('About'),
+            onTap: () {
+              Navigator.of(context).push(AboutScreen.route());
+              // Theme.of(context).
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _useAppbar() {
+    return SliverAppBar(
+      pinned: true,
+      backgroundColor: Theme.of(context).appBarTheme.color,
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.add,
+          ),
+          color: Colors.white,
+          onPressed: () async => await _createTodo(),
+        )
+      ],
+      elevation: 0,
+      excludeHeaderSemantics: true,
+      leading: IconButton(
+        icon: Icon(
+          Icons.menu,
+        ),
+        color: Colors.white,
+        onPressed: () => _scaffoldKey.currentState.openDrawer(),
+      ),
+      floating: true,
+      onStretchTrigger: () async {
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text('Hello'),
+          ),
+        );
+      },
+      automaticallyImplyLeading: false,
+      title: Text('Todo App'),
+      centerTitle: true,
+      iconTheme: Theme.of(context).accentIconTheme,
+    );
+  }
+
+  Widget _useDashboard() {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Theme.of(context).appBarTheme.color,
+        padding: kMaterialListPadding,
+        child: Column(
+          children: [
+            ValueListenableBuilder(
+              valueListenable: todoBox.listenable(),
+              builder: (context, Box box, _) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    StatDashboardWidget(
+                      statDesc: box.values.length.toString(),
+                      statTitle: 'All Todos',
+                    ),
+                    StatDashboardWidget(
+                      statDesc: box.values
+                          .where((v) => v['isCompleted'])
+                          .length
+                          .toString(),
+                      statTitle: 'Completed',
+                    ),
+                    StatDashboardWidget(
+                      statDesc: box.values
+                          .where((v) => !v['isCompleted'])
+                          .length
+                          .toString(),
+                      statTitle: 'Ongoing',
+                    )
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: Drawer(
-          child: Column(
-            children: [
-              FlatButton(
-                child: Text('Delete Todo'),
-                onPressed: () {
-                  todoBox.clear();
-                },
-              )
-            ],
-          ),
-        ),
+        key: _scaffoldKey,
+        drawer: _useDrawer(),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return <Widget>[
-              SliverAppBar(
-                pinned: true,
-                backgroundColor: Theme.of(context).appBarTheme.color,
-                actions: [
-                  FlatButton(
-                    onPressed: () async => await createTodo(),
-                    child: Icon(Icons.add),
-                  )
-                ],
-                elevation: 0,
-                excludeHeaderSemantics: true,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.menu,
-                  ),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                ),
-                floating: true,
-                onStretchTrigger: () async {
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Hello')));
-                },
-                automaticallyImplyLeading: false,
-                title: Text('TodoApp'),
-                centerTitle: true,
-                iconTheme: Theme.of(context).accentIconTheme,
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  color: Theme.of(context).appBarTheme.color,
-                  padding: kMaterialListPadding,
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder(
-                          valueListenable: todoBox.listenable(),
-                          builder: (context, Box box, _) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                StatDashboardWidget(
-                                  statDesc: box.values.length.toString(),
-                                  statTitle: 'All Todos',
-                                ),
-                                StatDashboardWidget(
-                                  statDesc: box.values
-                                      .where((v) => v['isCompleted'])
-                                      .length
-                                      .toString(),
-                                  statTitle: 'Completed',
-                                ),
-                                StatDashboardWidget(
-                                  statDesc: box.values
-                                      .where((v) => !v['isCompleted'])
-                                      .length
-                                      .toString(),
-                                  statTitle: 'Ongoing',
-                                )
-                              ],
-                            );
-                          }),
-                    ],
-                  ),
-                ),
-              )
+              _useAppbar(),
+              _useDashboard(),
             ];
           },
           body: SingleChildScrollView(
@@ -188,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return ListView.builder(
                       itemCount: box.values.length,
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final Map boxAtIndex = box.getAt(index);
                         return GestureDetector(
