@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_todo_app/main.dart';
+import 'package:flutter_todo_app/widgets/stat_dashboard_widget.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -22,6 +23,71 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  Future createTodo() {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(10),
+            color: CupertinoColors.white,
+            border:
+                Border.all(style: BorderStyle.solid, color: Colors.transparent),
+            // border: Border.(borderRadius: BorderRadius.circular(18)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: Text('Tulis Todo Anda'),
+              ),
+              Form(
+                key: _todoForm,
+                autovalidateMode: AutovalidateMode.always,
+                onChanged: () {
+                  _todoForm.currentState.save();
+                },
+                child: Column(
+                  children: [
+                    TextFormField(
+                      key: Key('text1'),
+                      onChanged: (val) {
+                        _todoForm.currentState.validate();
+
+                        _todoForm.currentState.save();
+                        todoText = val;
+                      },
+                      decoration: const InputDecoration(hintText: 'Enter Text'),
+                      showCursor: true,
+                    ),
+                    FlatButton(
+                      child: Row(
+                        children: [Icon(Icons.add), Text('Tambah')],
+                      ),
+                      onPressed: () {
+                        _todoForm.currentState.validate();
+                        // print(_todoForm.currentState.);
+                        // todoBox.put
+                        todoBox.add({
+                          'content': todoText,
+                          'isCompleted': false,
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
         drawer: Drawer(
           child: Column(
             children: [
-              Text('Hello!'),
               FlatButton(
                 child: Text('Delete Todo'),
                 onPressed: () {
@@ -47,76 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Theme.of(context).appBarTheme.color,
                 actions: [
                   FlatButton(
-                    onPressed: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          backgroundColor: Colors.transparent,
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(10),
-                              color: CupertinoColors.white,
-                              border: Border.all(
-                                  style: BorderStyle.solid,
-                                  color: Colors.transparent),
-                              // border: Border.(borderRadius: BorderRadius.circular(18)),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  child: Text('Tulis Todo Anda'),
-                                ),
-                                Form(
-                                  key: _todoForm,
-                                  autovalidateMode: AutovalidateMode.always,
-                                  onChanged: () {
-                                    _todoForm.currentState.save();
-                                  },
-                                  child: Column(
-                                    children: [
-                                      TextFormField(
-                                        key: Key('text1'),
-                                        onChanged: (val) {
-                                          // _todoForm.currentState.value ={}
-                                          _todoForm.currentState.validate();
-
-                                          _todoForm.currentState.save();
-                                          todoText = val;
-                                        },
-                                        decoration: const InputDecoration(
-                                            hintText: 'Enter Text'),
-                                        showCursor: true,
-                                      ),
-                                      FlatButton(
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.add),
-                                            Text('Tambah')
-                                          ],
-                                        ),
-                                        onPressed: () {
-                                          _todoForm.currentState.validate();
-                                          // print(_todoForm.currentState.);
-                                          // todoBox.put
-                                          todoBox.add({
-                                            'content': todoText,
-                                            'isCompleted': false,
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () async => await createTodo(),
                     child: Icon(Icons.add),
                   )
                 ],
@@ -124,27 +120,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 excludeHeaderSemantics: true,
                 leading: IconButton(
                   icon: Icon(
-                    Icons.ac_unit,
+                    Icons.menu,
                   ),
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
-                // bottom: AppBar(
-                //   title: Text('blabla'),
-                // ),
                 floating: true,
-                // snap: true,
                 onStretchTrigger: () async {
                   Scaffold.of(context)
                       .showSnackBar(SnackBar(content: Text('Hello')));
                 },
-                // expandedHeight: MediaQuery.of(context).size.height * 0.3,
-                // expandedHeight: 50,
-                automaticallyImplyLeading: false, title: Text('TodoApp'),
+                automaticallyImplyLeading: false,
+                title: Text('TodoApp'),
                 centerTitle: true,
                 iconTheme: Theme.of(context).accentIconTheme,
-                // bottom: AppBar(
-                //   title: Text('hahahahah'),
-                // ),
               ),
               SliverToBoxAdapter(
                 child: Container(
@@ -155,7 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ValueListenableBuilder(
                           valueListenable: todoBox.listenable(),
                           builder: (context, Box box, _) {
-                            print(box.values);
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -231,48 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                // Container(
-                //   color: Theme.of(context).backgroundColor,
-                //   height: 1990,
-                // ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class StatDashboardWidget extends StatelessWidget {
-  final String statDesc;
-  final String statTitle;
-
-  const StatDashboardWidget({Key key, this.statDesc, this.statTitle})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      isMaterialAppTheme: true,
-      data: Theme.of(context).copyWith(
-        textTheme: Theme.of(context).textTheme.merge(Typography.whiteCupertino),
-      ),
-      child: Builder(
-        builder: (context) {
-          return Column(
-            children: [
-              Text(
-                statDesc,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(
-                statTitle,
-                style: Theme.of(context).textTheme.bodyText1,
-              )
-            ],
-          );
-        },
       ),
     );
   }
