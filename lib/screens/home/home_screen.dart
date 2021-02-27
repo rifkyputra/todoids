@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(10),
-            color: CupertinoColors.white,
+            color: Theme.of(context).dialogBackgroundColor,
             border:
                 Border.all(style: BorderStyle.solid, color: Colors.transparent),
           ),
@@ -115,10 +115,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BlocBuilder<ThemeCubit, ThemeState>(
             builder: (context, themeState) {
-              print(themeState.themeMode);
+              Icon icon = Icon(Icons.nightlight_round);
+              Text text = Text('Dark Mode');
+
+              print(Theme.of(context).brightness);
+
+              if (Theme.of(context).brightness == Brightness.dark) {
+                icon = Icon(Icons.ac_unit);
+                text = Text('Bright Mode');
+              }
+
               return ListTile(
-                leading: Icon(Icons.nightlight_round),
-                title: Text('Dark Mode'),
+                leading: icon,
+                title: text,
                 onTap: () {
                   context.read<ThemeCubit>().toggleDarkTheme();
                   // Theme.of(context).
@@ -267,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? TextStyle(
                                       decoration: TextDecoration.lineThrough,
                                       fontSize: 18,
+                                      color: Colors.grey,
                                     )
                                   : TextStyle(fontSize: 18),
                             ),
