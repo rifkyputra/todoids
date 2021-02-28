@@ -281,9 +281,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          // final Map boxAtIndex = todoBox.getAt(index);
                           TodoItem item = state.result[index];
                           return GestureDetector(
+                            onLongPress: () {
+                              todoBox.deleteAt(index);
+                            },
                             onTap: () {
                               // todoBox.get();
 
@@ -300,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                '   ${state.result[index].name}   ',
+                                '    ${state.result[index].name}    ',
                                 style: item.completed
                                     ? TextStyle(
                                         decoration: TextDecoration.lineThrough,
