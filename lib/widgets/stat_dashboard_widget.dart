@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 class StatDashboardWidget extends StatelessWidget {
   final String statDesc;
   final String statTitle;
+  final Function onTap;
 
-  const StatDashboardWidget({Key key, this.statDesc, this.statTitle})
-      : super(key: key);
+  const StatDashboardWidget({
+    Key key,
+    this.statDesc,
+    this.statTitle,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // context.read()
-      },
+      onTap: onTap,
       child: Theme(
         isMaterialAppTheme: true,
         data: Theme.of(context).copyWith(

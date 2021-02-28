@@ -25,6 +25,7 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^0.8.2
   build_runner: ^1.11.0
+  flutter_native_splash: ^0.3.0
 
 flutter:
   # The following line ensures that the Material Icons font is

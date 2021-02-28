@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todo_app/blocs/app_event.dart';
+import 'package:flutter_todo_app/blocs/app_state.dart';
+import 'package:flutter_todo_app/blocs/list_todo/list_todo_bloc.dart';
 import 'package:flutter_todo_app/blocs/theme/theme_bloc.dart';
 import 'package:flutter_todo_app/main.dart';
+import 'package:flutter_todo_app/models/todo_item.dart';
 import 'package:flutter_todo_app/screens/about_screen.dart';
 import 'package:flutter_todo_app/screens/settings_screen.dart';
 import 'package:flutter_todo_app/widgets/stat_dashboard_widget.dart';
@@ -118,8 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon icon = Icon(Icons.nightlight_round);
               Text text = Text('Dark Mode');
 
-              print(Theme.of(context).brightness);
-
               if (Theme.of(context).brightness == Brightness.dark) {
                 icon = Icon(Icons.ac_unit);
                 text = Text('Bright Mode');
@@ -201,6 +203,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     StatDashboardWidget(
                       statDesc: box.values.length.toString(),
                       statTitle: 'All Todos',
+                      onTap: () {
+                        context.read<ListTodoBloc>().add(
+                              Get<ListTodoTypes>(
+                                request: ListTodoTypes.All,
+                              ),
+                            );
+                      },
                     ),
                     StatDashboardWidget(
                       statDesc: box.values
@@ -208,6 +217,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           .length
                           .toString(),
                       statTitle: 'Completed',
+                      onTap: () {
+                        context.read<ListTodoBloc>().add(
+                              Get<ListTodoTypes>(
+                                request: ListTodoTypes.Completed,
+                              ),
+                            );
+                      },
                     ),
                     StatDashboardWidget(
                       statDesc: box.values
@@ -215,6 +231,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           .length
                           .toString(),
                       statTitle: 'Ongoing',
+                      onTap: () {
+                        context.read<ListTodoBloc>().add(
+                              Get<ListTodoTypes>(
+                                request: ListTodoTypes.Ongoing,
+                              ),
+                            );
+                      },
                     )
                   ],
                 );
@@ -243,47 +266,56 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ValueListenableBuilder(
-                  valueListenable: todoBox.listenable(),
-                  builder: (context, Box box, widget) {
-                    if (box.values.isEmpty) {
-                      return Center(
-                        child: Text('No Todo'),
+                BlocBuilder<ListTodoBloc, AppState>(
+                  builder: (context, state) {
+                    if (state is Loaded<List<TodoItem>>) {
+                      if (state.result.isEmpty) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: Center(child: Text('No Todo')),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: state.result.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          // final Map boxAtIndex = todoBox.getAt(index);
+                          TodoItem item = state.result[index];
+                          return GestureDetector(
+                            onTap: () {
+                              // todoBox.get();
+
+                              item = item.copyWith(completed: !item.completed);
+                              todoBox.putAt(
+                                item.id,
+                                item.toMap(),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 22,
+                                vertical: 10,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '   ${state.result[index].name}   ',
+                                style: item.completed
+                                    ? TextStyle(
+                                        decoration: TextDecoration.lineThrough,
+                                        fontSize: 18,
+                                        color: Colors.grey,
+                                      )
+                                    : TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          );
+                        },
                       );
                     }
-                    return ListView.builder(
-                      itemCount: box.values.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final Map boxAtIndex = box.getAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            boxAtIndex['isCompleted'] =
-                                !boxAtIndex['isCompleted'];
-                            box.putAt(
-                              index,
-                              boxAtIndex,
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 22, vertical: 10),
-                            alignment: Alignment.center,
-                            child: Text(
-                              boxAtIndex['content'],
-                              style: boxAtIndex['isCompleted']
-                                  ? TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                      fontSize: 18,
-                                      color: Colors.grey,
-                                    )
-                                  : TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+
+                    return SizedBox();
                   },
                 ),
               ],
