@@ -12,9 +12,9 @@ class DashboardStat {
   });
 
   DashboardStat copyWith({
-    required int allTodos,
-    required int completed,
-    required int ongoing,
+    int? allTodos,
+    int? completed,
+    int? ongoing,
   }) {
     return DashboardStat(
       allTodos: allTodos ?? this.allTodos,

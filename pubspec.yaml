@@ -17,6 +17,7 @@ dependencies:
   flutter_bloc: ^7.0.0-nullsafety.4
   hydrated_bloc: ^7.0.0-nullsafety.3
   firebase_core: ^1.0.1
+  path_provider: ^2.0.1
 
   cupertino_icons: ^1.0.0
 

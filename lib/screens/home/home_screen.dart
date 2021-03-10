@@ -66,36 +66,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 key: _todoForm,
                 autovalidateMode: AutovalidateMode.always,
                 onChanged: () {
-                  _todoForm?.currentState?.save();
+                  _todoForm.currentState?.save();
                 },
                 child: Column(
                   children: [
                     TextFormField(
                       key: Key('text1'),
                       onChanged: (val) {
-                        _todoForm?.currentState?.validate();
+                        _todoForm.currentState?.validate();
 
-                        _todoForm?.currentState?.save();
+                        _todoForm.currentState?.save();
                         todoText = val;
                       },
                       decoration: const InputDecoration(hintText: 'Enter Text'),
                       showCursor: true,
                     ),
-                    FlatButton(
-                      child: Row(
-                        children: [Icon(Icons.add), Text('Tambah')],
-                      ),
+                    TextButton(
                       onPressed: () {
                         _todoForm.currentState?.validate();
 
-                        todoBox?.add({
+                        todoBox.add({
                           'content': todoText,
                           'isCompleted': false,
                         });
 
                         Navigator.of(context).pop();
                       },
-                    )
+                      child: Row(
+                        children: [Icon(Icons.add), Text('Tambah')],
+                      ),
+                    ),
+                    // FlatButton(
+                    //   child: Row(
+                    //     children: [Icon(Icons.add), Text('Tambah')],
+                    //   ),
+                    //   onPressed: () {
+                    //     _todoForm.currentState?.validate();
+
+                    //     todoBox.add({
+                    //       'content': todoText,
+                    //       'isCompleted': false,
+                    //     });
+
+                    //     Navigator.of(context).pop();
+                    //   },
+                    // )
                   ],
                 ),
               ),
@@ -170,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Icons.menu,
         ),
         color: Colors.white,
-        onPressed: () => _scaffoldKey?.currentState?.openDrawer(),
+        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       floating: true,
       onStretchTrigger: () async {
@@ -284,13 +299,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           TodoItem item = state.result[index];
                           return GestureDetector(
                             onLongPress: () {
-                              todoBox?.deleteAt(index);
+                              todoBox.deleteAt(index);
                             },
                             onTap: () {
                               // todoBox.get();
 
                               item = item.copyWith(completed: !item.completed);
-                              todoBox?.putAt(
+                              todoBox.putAt(
                                 item.id,
                                 item.toMap(),
                               );

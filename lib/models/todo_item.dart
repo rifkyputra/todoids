@@ -35,6 +35,7 @@ class TodoItem {
   TodoItem copyWith({
     bool? completed,
     String? name,
+    int? id,
   }) {
     return TodoItem(
       completed: completed ?? this.completed,

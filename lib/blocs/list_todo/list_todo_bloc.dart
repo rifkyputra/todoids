@@ -51,7 +51,7 @@ class ListTodoBloc extends Bloc<AppEvent, AppState> {
       mapListenable.call();
       listenable?.addListener(mapListenable);
     } else if (event is Get<ListTodoTypes>) {
-      if (listenable == null || mapListenable == null) {
+      if (listenable == null) {
         yield Loaded<List<TodoItem>>([]);
         return;
       }

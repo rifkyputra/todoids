@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_todo_app/screens/app.dart';
 
 @immutable
 abstract class AppState {}

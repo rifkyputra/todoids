@@ -2,13 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todo_app/blocs/app_event.dart';
-import 'package:flutter_todo_app/blocs/app_state.dart';
 import 'package:flutter_todo_app/blocs/list_todo/list_todo_bloc.dart';
 import 'package:flutter_todo_app/blocs/theme/theme_bloc.dart';
 import 'package:flutter_todo_app/main.dart';
 import 'package:flutter_todo_app/repositories/todo_repository.dart';
 import 'package:flutter_todo_app/screens/home/home_screen.dart';
-import 'package:hive/hive.dart';
 
 class App extends StatelessWidget {
   @override
