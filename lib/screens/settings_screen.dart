@@ -25,7 +25,7 @@ class SettingsScreen extends StatelessWidget {
             leading: Icon(Icons.delete),
             title: Text('Delete All Todo'),
             onTap: () {
-              todoBox.clear();
+              todoBox?.clear();
             },
           ),
         ],

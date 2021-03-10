@@ -14,19 +14,19 @@ class Loaded<T> extends AppState {
 }
 
 class Success extends AppState {
-  final String message;
+  final String? message;
 
   Success({this.message});
 }
 
 class Error extends AppState {
-  final String message;
+  final String? message;
 
   Error({this.message});
 }
 
 class Pending extends AppState {
-  final double millisecond;
+  final double? millisecond;
 
   Pending({this.millisecond});
 }

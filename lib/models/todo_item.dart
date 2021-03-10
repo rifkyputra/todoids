@@ -6,9 +6,9 @@ class TodoItem {
   final int id;
 
   TodoItem({
-    this.completed,
-    this.name,
-    this.id,
+    required this.completed,
+    required this.name,
+    required this.id,
   });
 
   Map<String, dynamic> toMap() {
@@ -18,9 +18,7 @@ class TodoItem {
     };
   }
 
-  factory TodoItem.fromMap(Map<dynamic, dynamic> map, {int id}) {
-    if (map == null) return null;
-
+  factory TodoItem.fromMap(Map<dynamic, dynamic> map, {required int id}) {
     return TodoItem(
       completed: map['isCompleted'],
       name: map['content'],
@@ -31,12 +29,12 @@ class TodoItem {
 
   String toJson() => json.encode(toMap());
 
-  factory TodoItem.fromJson(String source) =>
-      TodoItem.fromMap(json.decode(source));
+  factory TodoItem.fromJson(String source, id) =>
+      TodoItem.fromMap(json.decode(source), id: id);
 
   TodoItem copyWith({
-    bool completed,
-    String name,
+    bool? completed,
+    String? name,
   }) {
     return TodoItem(
       completed: completed ?? this.completed,

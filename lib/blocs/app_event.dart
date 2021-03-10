@@ -15,7 +15,7 @@ class Get<T> extends AppEvent {
   final T request;
   final dynamic data;
 
-  Get({this.request, this.data});
+  Get({required this.request, this.data});
 }
 
 class Update extends AppEvent {}

@@ -6,15 +6,15 @@ class DashboardStat {
   final int ongoing;
 
   DashboardStat({
-    this.allTodos,
-    this.completed,
-    this.ongoing,
+    required this.allTodos,
+    required this.completed,
+    required this.ongoing,
   });
 
   DashboardStat copyWith({
-    int allTodos,
-    int completed,
-    int ongoing,
+    required int allTodos,
+    required int completed,
+    required int ongoing,
   }) {
     return DashboardStat(
       allTodos: allTodos ?? this.allTodos,
@@ -32,8 +32,6 @@ class DashboardStat {
   }
 
   factory DashboardStat.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return DashboardStat(
       allTodos: map['allTodos'],
       completed: map['completed'],

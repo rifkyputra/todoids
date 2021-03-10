@@ -15,30 +15,30 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  GlobalKey<FormState> _todoForm;
+  GlobalKey<FormState> _todoForm = GlobalKey<FormState>();
 
-  GlobalKey<ScaffoldState> _scaffoldKey;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String todoText;
+  String? todoText;
 
   @override
   initState() {
-    _todoForm = GlobalKey<FormState>();
-    _scaffoldKey = GlobalKey<ScaffoldState>();
+    // _todoForm = GlobalKey<FormState>();
+    // _scaffoldKey = GlobalKey<ScaffoldState>();
     super.initState();
   }
 
   @override
   dispose() {
-    _todoForm.currentState.dispose();
-    _scaffoldKey.currentState.dispose();
+    _todoForm.currentState?.dispose();
+    _scaffoldKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -66,16 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 key: _todoForm,
                 autovalidateMode: AutovalidateMode.always,
                 onChanged: () {
-                  _todoForm.currentState.save();
+                  _todoForm?.currentState?.save();
                 },
                 child: Column(
                   children: [
                     TextFormField(
                       key: Key('text1'),
                       onChanged: (val) {
-                        _todoForm.currentState.validate();
+                        _todoForm?.currentState?.validate();
 
-                        _todoForm.currentState.save();
+                        _todoForm?.currentState?.save();
                         todoText = val;
                       },
                       decoration: const InputDecoration(hintText: 'Enter Text'),
@@ -86,9 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [Icon(Icons.add), Text('Tambah')],
                       ),
                       onPressed: () {
-                        _todoForm.currentState.validate();
+                        _todoForm.currentState?.validate();
 
-                        todoBox.add({
+                        todoBox?.add({
                           'content': todoText,
                           'isCompleted': false,
                         });
@@ -170,11 +170,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Icons.menu,
         ),
         color: Colors.white,
-        onPressed: () => _scaffoldKey.currentState.openDrawer(),
+        onPressed: () => _scaffoldKey?.currentState?.openDrawer(),
       ),
       floating: true,
       onStretchTrigger: () async {
-        _scaffoldKey.currentState.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Hello'),
           ),
@@ -284,13 +284,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           TodoItem item = state.result[index];
                           return GestureDetector(
                             onLongPress: () {
-                              todoBox.deleteAt(index);
+                              todoBox?.deleteAt(index);
                             },
                             onTap: () {
                               // todoBox.get();
 
                               item = item.copyWith(completed: !item.completed);
-                              todoBox.putAt(
+                              todoBox?.putAt(
                                 item.id,
                                 item.toMap(),
                               );

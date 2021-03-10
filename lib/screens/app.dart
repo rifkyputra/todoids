@@ -44,7 +44,7 @@ class App extends StatelessWidget {
 class AppProviders extends StatelessWidget {
   final child;
 
-  const AppProviders({Key key, this.child})
+  const AppProviders({Key? key, this.child})
       : assert(child != null),
         super(key: key);
   @override
