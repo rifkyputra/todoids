@@ -17,8 +17,8 @@ class App extends StatelessWidget {
           return MaterialApp(
             title: 'Todo App',
             theme: ThemeData(
-              appBarTheme: AppBarTheme(color: CupertinoColors.systemIndigo),
-              primaryColor: Colors.deepPurple,
+              // appBarTheme: AppBarTheme(color: CupertinoColors.systemIndigo),
+              primaryColor: state.themeColor,
               accentColor: Colors.purpleAccent,
               accentIconTheme: IconThemeData(color: Colors.blue, size: 40),
               // typography: Typography.material2018(),
@@ -31,7 +31,8 @@ class App extends StatelessWidget {
             ),
             darkTheme: ThemeData.dark(),
             themeMode: state.themeMode,
-            home: HomeScreen(),
+            onGenerateRoute: (_) => HomeScreen.route(),
+            // home: HomeScreen(),
           );
         },
       ),

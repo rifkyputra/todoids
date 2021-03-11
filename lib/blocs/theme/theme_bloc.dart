@@ -11,27 +11,33 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
   ThemeCubit()
       : super(
           ThemeState(
-            themeMode: ThemeMode.system,
-          ),
+              themeMode: ThemeMode.system, themeColor: Colors.deepPurple),
         );
 
   toggleDarkTheme({bool useSystemTheme = false}) {
     if (useSystemTheme) {
-      emit(ThemeState(themeMode: ThemeMode.system));
+      emit(ThemeState(
+          themeMode: ThemeMode.system, themeColor: state.themeColor));
       return;
     }
 
     if (state.themeMode == ThemeMode.dark) {
-      emit(ThemeState(themeMode: ThemeMode.light));
+      emit(
+          ThemeState(themeMode: ThemeMode.light, themeColor: state.themeColor));
     } else {
-      emit(ThemeState(themeMode: ThemeMode.dark));
+      emit(ThemeState(themeMode: ThemeMode.dark, themeColor: state.themeColor));
     }
+  }
+
+  swithColor({Color color = Colors.black}) {
+    emit(ThemeState(themeMode: state.themeMode, themeColor: color));
   }
 
   @override
   ThemeState fromJson(Map<String, dynamic> json) {
     ThemeMode modeFromJson = ThemeMode.values[json['themeMode']];
-    return ThemeState(themeMode: modeFromJson);
+    Color colorFromJson = Color(json['themeColor']);
+    return ThemeState(themeMode: modeFromJson, themeColor: colorFromJson);
   }
 
   @override

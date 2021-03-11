@@ -15,6 +15,17 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
+  static String name = 'HomeScreen';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: RouteSettings(name: name),
+      builder: (_) {
+        return HomeScreen();
+      },
+    );
+  }
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -30,8 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   initState() {
-    // _todoForm = GlobalKey<FormState>();
-    // _scaffoldKey = GlobalKey<ScaffoldState>();
     super.initState();
   }
 
@@ -41,6 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _scaffoldKey.currentState?.dispose();
     super.dispose();
   }
+
+  final Map<String, Color> _colorThemesOptions = {
+    'Indigo': Colors.indigo,
+    'pink': Colors.pink,
+    'green': Colors.green,
+    'blue': Colors.blue,
+  };
 
   Future _createTodo() {
     return showDialog(
@@ -96,27 +112,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [Icon(Icons.add), Text('Tambah')],
                       ),
                     ),
-                    // FlatButton(
-                    //   child: Row(
-                    //     children: [Icon(Icons.add), Text('Tambah')],
-                    //   ),
-                    //   onPressed: () {
-                    //     _todoForm.currentState?.validate();
-
-                    //     todoBox.add({
-                    //       'content': todoText,
-                    //       'isCompleted': false,
-                    //     });
-
-                    //     Navigator.of(context).pop();
-                    //   },
-                    // )
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _useWheelOption(String text, Color color) {
+    return GestureDetector(
+      onTap: () {
+        context.read<ThemeCubit>().swithColor(color: color);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 5,
+        ),
+        child: Text('$text'),
       ),
     );
   }
@@ -160,6 +176,93 @@ class _HomeScreenState extends State<HomeScreen> {
               // Theme.of(context).
             },
           ),
+          ListTile(
+            leading: Icon(Icons.palette),
+            title: Text('Customize'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushAndRemoveUntil(HomeScreen.route(), (route) => false);
+              showModalBottomSheet(
+                  barrierColor: Colors.transparent,
+                  context: context,
+                  builder: (_) {
+                    return BottomSheet(
+                        onClosing: () {},
+                        builder: (context) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).dialogBackgroundColor,
+                              boxShadow: kElevationToShadow[3],
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Icon(Icons.close),
+                                  ),
+                                ),
+                                Container(
+                                  height: 110,
+                                  child: ListWheelScrollView.useDelegate(
+                                    itemExtent: 44,
+                                    onSelectedItemChanged: (i) {
+                                      print(_colorThemesOptions[i]);
+                                      context.read<ThemeCubit>().swithColor(
+                                            color: _colorThemesOptions.entries
+                                                .toList()[i]
+                                                .value,
+                                          );
+                                    },
+                                    childDelegate:
+                                        ListWheelChildBuilderDelegate(
+                                      childCount: _colorThemesOptions.length,
+                                      builder: (context, i) {
+                                        return _useWheelOption(
+                                          _colorThemesOptions.entries
+                                              .toList()[i]
+                                              .key,
+                                          _colorThemesOptions[i] ??
+                                              Colors.black,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  });
+              // showDialog(
+              //     context: context,
+              //     barrierDismissible: false,
+
+              //     builder: (_) {
+              //       return Dialog(
+
+              //         child: Column(
+              //           mainAxisSize: MainAxisSize.min,
+              //           children: [
+              //             ListTile(
+              //               leading: Icon(Icons.palette),
+
+              //             ),
+              //           ],
+              //         ),
+              //       );
+              //     });
+              // Theme.of(context).
+            },
+          ),
         ],
       ),
     );
@@ -168,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _useAppbar() {
     return SliverAppBar(
       pinned: true,
-      backgroundColor: Theme.of(context).appBarTheme.color,
+      backgroundColor: Theme.of(context).primaryColor,
       actions: [
         IconButton(
           icon: Icon(
@@ -205,8 +308,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _useDashboard() {
     return SliverToBoxAdapter(
       child: Container(
-        color: Theme.of(context).appBarTheme.color,
-        padding: kMaterialListPadding,
+        color: Theme.of(context).primaryColor,
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 3),
         child: Column(
           children: [
             ValueListenableBuilder(
@@ -302,8 +405,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               todoBox.deleteAt(index);
                             },
                             onTap: () {
-                              // todoBox.get();
-
                               item = item.copyWith(completed: !item.completed);
                               todoBox.putAt(
                                 item.id,

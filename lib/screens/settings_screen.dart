@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo_app/main.dart';
 
 class SettingsScreen extends StatelessWidget {
-  static route() {
+  static Route route() {
     return MaterialPageRoute(
       builder: (_) {
         return SettingsScreen();
