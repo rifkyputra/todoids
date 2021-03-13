@@ -2,7 +2,7 @@
 # flutter-todo-exercise
 exploring new concept using todo app
 =======
-# flutter_todo_app
+# todoids
 
 A new Flutter project.
 

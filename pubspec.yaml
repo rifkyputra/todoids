@@ -1,5 +1,5 @@
-name: flutter_todo_app
-description: A new Flutter project.
+name: todoids
+description: A Customizable Todo Apps
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 

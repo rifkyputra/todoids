@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_todo_app/blocs/app_event.dart';
-import 'package:flutter_todo_app/blocs/list_todo/list_todo_bloc.dart';
-import 'package:flutter_todo_app/blocs/theme/theme_bloc.dart';
-import 'package:flutter_todo_app/main.dart';
-import 'package:flutter_todo_app/repositories/todo_repository.dart';
-import 'package:flutter_todo_app/screens/home/home_screen.dart';
+import 'package:todoids/blocs/_blocs.dart';
+import 'package:todoids/blocs/app_event.dart';
+import 'package:todoids/blocs/list_todo/list_todo_bloc.dart';
+import 'package:todoids/blocs/theme/theme_bloc.dart';
+import 'package:todoids/main.dart';
+import 'package:todoids/repositories/todo_repository.dart';
+import 'package:todoids/screens/home/home_screen.dart';
 
 class App extends StatelessWidget {
   @override
@@ -55,10 +56,13 @@ class AppProviders extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ListTodoBloc()
-            ..add(Initializing(
-              data: todoBox,
-            )),
+            ..add(
+              Initializing(
+                data: todoBox,
+              ),
+            ),
         ),
+        BlocProvider(create: (context) => TodoCategoryCubit()),
       ],
       child: MultiRepositoryProvider(
         providers: [

@@ -7,9 +7,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
 
-import 'package:flutter_todo_app/blocs/app_event.dart';
-import 'package:flutter_todo_app/blocs/app_state.dart';
-import 'package:flutter_todo_app/models/todo_item.dart';
+import 'package:todoids/blocs/app_event.dart';
+import 'package:todoids/blocs/app_state.dart';
+import 'package:todoids/models/todo_item.dart';
 
 part 'list_todo_event.dart';
 part 'list_todo_state.dart';

@@ -2,17 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_todo_app/blocs/app_event.dart';
-import 'package:flutter_todo_app/blocs/app_state.dart';
-import 'package:flutter_todo_app/blocs/list_todo/list_todo_bloc.dart';
-import 'package:flutter_todo_app/blocs/theme/theme_bloc.dart';
-import 'package:flutter_todo_app/main.dart';
-import 'package:flutter_todo_app/models/todo_item.dart';
-import 'package:flutter_todo_app/screens/about_screen.dart';
-import 'package:flutter_todo_app/screens/settings_screen.dart';
-import 'package:flutter_todo_app/widgets/stat_dashboard_widget.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todoids/blocs/_blocs.dart';
+
+import 'package:todoids/main.dart';
+import 'package:todoids/models/todo_item.dart';
+import 'package:todoids/screens/about/about_screen.dart';
+import 'package:todoids/screens/settings/settings_screen.dart';
+import 'package:todoids/widgets/dashboard_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   static String name = 'HomeScreen';
@@ -307,65 +303,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _useDashboard() {
     return SliverToBoxAdapter(
-      child: Container(
-        color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 3),
-        child: Column(
-          children: [
-            ValueListenableBuilder(
-              valueListenable: todoBox.listenable(),
-              builder: (context, Box box, _) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    StatDashboardWidget(
-                      statDesc: box.values.length.toString(),
-                      statTitle: 'All Todos',
-                      onTap: () {
-                        context.read<ListTodoBloc>().add(
-                              Get<ListTodoTypes>(
-                                request: ListTodoTypes.All,
-                              ),
-                            );
-                      },
-                    ),
-                    StatDashboardWidget(
-                      statDesc: box.values
-                          .where((v) => v['isCompleted'])
-                          .length
-                          .toString(),
-                      statTitle: 'Completed',
-                      onTap: () {
-                        context.read<ListTodoBloc>().add(
-                              Get<ListTodoTypes>(
-                                request: ListTodoTypes.Completed,
-                              ),
-                            );
-                      },
-                    ),
-                    StatDashboardWidget(
-                      statDesc: box.values
-                          .where((v) => !v['isCompleted'])
-                          .length
-                          .toString(),
-                      statTitle: 'Ongoing',
-                      onTap: () {
-                        context.read<ListTodoBloc>().add(
-                              Get<ListTodoTypes>(
-                                request: ListTodoTypes.Ongoing,
-                              ),
-                            );
-                      },
-                    )
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      child: DashboardWidget(),
     );
   }
+
+  String dropdownValue = '_dropdownList';
 
   @override
   Widget build(BuildContext context) {
@@ -384,6 +326,38 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Container(
+                //   color: Theme.of(context).primaryColor,
+                //   child: DropdownButton<String>(
+                //     value: dropdownValue,
+                //     onTap: () {
+                //       print('tapped');
+                //     },
+                //     onChanged: (String? newValue) {
+                //       setState(() {
+                //         dropdownValue = newValue!;
+                //       });
+                //     },
+                //     dropdownColor: Theme.of(context).primaryColor,
+                //     iconSize: 0,
+                //     isExpanded: true,
+                //     elevation: 0,
+                //     style: TextStyle(color: Colors.white),
+                //     underline: Container(
+                //       height: 0,
+                //       color: Colors.transparent,
+                //     ),
+                //     items: <String>['_dropdownList', '_dropdownList2']
+                //         .map<DropdownMenuItem<String>>(
+                //             (value) => DropdownMenuItem<String>(
+                //                   value: value,
+                //                   child: Container(
+                //                     child: Text(value),
+                //                   ),
+                //                 ))
+                //         .toList(),
+                //   ),
+                // ),
                 BlocBuilder<ListTodoBloc, AppState>(
                   builder: (context, state) {
                     if (state is Loaded<List<TodoItem>>) {
